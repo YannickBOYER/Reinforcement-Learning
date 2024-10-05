@@ -75,29 +75,49 @@ if __name__ == "__main__":
 
     # Exo 3 + 4
     
-    players = [GreedyPlayer(n=10, eps=0.1) for _ in range(2000)]
-    bandits = [Ban10() for _ in range(2000)]
-    rewards = []
+    epsilons = [0, 0.01, 0.1]
+    all_rewards = {eps: [] for eps in epsilons}
+    all_optimal_action_counts = {eps: [] for eps in epsilons}
 
-    for _ in range(1000):
-        rewards_step = []
-        for i in range(len(players)):
-            player = players[i]
-            bandit = bandits[i]
-            action = player.get_action()
-            reward = bandit.play(action)
-            player.reward(action, reward)
-            optimal_action = action == bandit.id_best_bandit
-            print(f"Tour {_}: Récompense: {reward}, Optimal: {optimal_action}")
-            rewards_step.append(reward)
-        avg_reward = sum(rewards_step) / len(rewards_step)
-        rewards.append(avg_reward)
+    for eps in epsilons:
+        players = [GreedyPlayer(n=10, eps=eps) for _ in range(2000)]
+        bandits = [Ban10() for _ in range(2000)]
+        rewards = []
+        optimal_action_counts = []
 
-    plt.plot(rewards)
-    plt.title('Évolution de la récompense')
+        for _ in range(1000):
+            rewards_step = []
+            optimal_actions_step = 0
+            for i in range(len(players)):
+                player = players[i]
+                bandit = bandits[i]
+                action = player.get_action()
+                reward = bandit.play(action)
+                player.reward(action, reward)
+                optimal_action = action == bandit.id_best_bandit
+                if optimal_action:
+                    optimal_actions_step += 1
+                # print(f"Tour {_}: Récompense: {reward}, Optimal: {optimal_action}")
+                rewards_step.append(reward)
+            avg_reward = sum(rewards_step) / len(rewards_step)
+            rewards.append(avg_reward)
+            optimal_action_percentage = (optimal_actions_step / len(players)) * 100
+            optimal_action_counts.append(optimal_action_percentage)
+        all_rewards[eps] = rewards
+        all_optimal_action_counts[eps] = optimal_action_counts
+
+    for eps in epsilons:
+        plt.plot(all_rewards[eps], label=f"epsilon = {eps}")
+    plt.title('Évolution de la récompense moyenne')
     plt.xlabel('Itération')
     plt.ylabel('Récompense')
+    plt.legend()
     plt.show()
 
-    print(f"Action values: {player.action_values}")
-
+    for eps in epsilons:
+        plt.plot(all_optimal_action_counts[eps], label=f"epsilon = {eps}")
+    plt.title('Évolution pourcentage actions optimales')
+    plt.xlabel('Itération')
+    plt.ylabel('Valeur')
+    plt.legend()
+    plt.show()
