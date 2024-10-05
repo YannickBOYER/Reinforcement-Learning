@@ -12,10 +12,35 @@ class Bandit:
 class Ban10:
     def __init__(self):
         self.bandits = [Bandit() for i in range(10)]
-        
         self.id_best_bandit = max(range(len(self.bandits)), key=lambda x: self.bandits[x].avg)
+
     def play(self, numero):
-        return self.bandits[numero].play()
+        if 0 <= numero < len(self.bandits):
+            return self.bandits[numero].play()
+
+class GreedyPlayer:
+    def __init__(self, n, eps):
+        self.n = n
+        self.eps = eps
+        self.eval_count = [0] * n
+        self.action_values = [0.0] * n
+
+    def get_action(self):
+        random_value = random.random()
+        explore = random_value < self.eps
+        
+        if explore:
+            return self._random_action()
+        else:
+            return self._greedy_action()
+    
+    def _greedy_action(self):
+        max_value_estimation = max(self.action_values)
+        bests_actions = [i for i, value in enumerate(self.action_values) if value == max_value_estimation]
+        return random.choice(bests_actions)
+    
+    def _random_action(self):
+        return random.randint(0, self.n - 1)
         
 if __name__ == "__main__":
     # Exo 1
