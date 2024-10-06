@@ -1,6 +1,7 @@
 import random
 import matplotlib.pyplot as plt
 import seaborn as sns
+import math
 
 class Bandit:
     def __init__(self):
@@ -45,6 +46,31 @@ class GreedyPlayer:
     def reward(self, action, reward):
         self.eval_count[action] += 1
         self.action_values[action] += (reward - self.action_values[action]) / self.eval_count[action]
+
+class OptimistGreedyPlayer(GreedyPlayer):
+    def __init__(self, n, eps):
+        super.__init__(n, eps)
+        self.action_values = [5.0] * n
+
+class UCBGreedyPlayer(GreedyPlayer):
+    def __init__(self, n, eps, c):
+        super.__init__(n, eps)
+        self.c = c
+
+    def _greedy_action(self):
+        t = sum(self.eval_count)
+        if t == 0:
+            return random.choice(range(self.n))
+        ucb_values = []
+        for i in range(self.n):
+            if self.eval_count[i] == 0:
+                ucb_values.append(float('inf'))
+            else:
+                ucb_value = self.action_values[i] + self.c * math.sqrt(math.log(t) / self.eval_count[i])
+                ucb_values.append(ucb_value)
+        
+        return ucb_values.index(max(ucb_values))
+
 
 if __name__ == "__main__":
     # Exo 1
