@@ -49,12 +49,12 @@ class GreedyPlayer:
 
 class OptimistGreedyPlayer(GreedyPlayer):
     def __init__(self, n, eps):
-        super.__init__(n, eps)
+        super().__init__(n, eps) 
         self.action_values = [5.0] * n
 
 class UCBGreedyPlayer(GreedyPlayer):
     def __init__(self, n, eps, c):
-        super.__init__(n, eps)
+        super().__init__(n, eps)
         self.c = c
 
     def _greedy_action(self):
@@ -101,21 +101,121 @@ if __name__ == "__main__":
 
     # Exo 3 + 4
     
-    epsilons = [0, 0.01, 0.1]
-    all_rewards = {eps: [] for eps in epsilons}
-    all_optimal_action_counts = {eps: [] for eps in epsilons}
+    # epsilons = [0, 0.01, 0.1]
+    # all_rewards = {eps: [] for eps in epsilons}
+    # all_optimal_action_counts = {eps: [] for eps in epsilons}
 
-    for eps in epsilons:
-        players = [GreedyPlayer(n=10, eps=eps) for _ in range(2000)]
-        bandits = [Ban10() for _ in range(2000)]
+    # for eps in epsilons:
+    #     players = [GreedyPlayer(n=10, eps=eps) for _ in range(2000)]
+    #     bandits = [Ban10() for _ in range(2000)]
+    #     rewards = []
+    #     optimal_action_counts = []
+
+    #     for _ in range(1000):
+    #         rewards_step = []
+    #         optimal_actions_step = 0
+    #         for i in range(len(players)):
+    #             player = players[i]
+    #             bandit = bandits[i]
+    #             action = player.get_action()
+    #             reward = bandit.play(action)
+    #             player.reward(action, reward)
+    #             optimal_action = action == bandit.id_best_bandit
+    #             if optimal_action:
+    #                 optimal_actions_step += 1
+    #             # print(f"Tour {_}: Récompense: {reward}, Optimal: {optimal_action}")
+    #             rewards_step.append(reward)
+    #         avg_reward = sum(rewards_step) / len(rewards_step)
+    #         rewards.append(avg_reward)
+    #         optimal_action_percentage = (optimal_actions_step / len(players)) * 100
+    #         optimal_action_counts.append(optimal_action_percentage)
+    #     all_rewards[eps] = rewards
+    #     all_optimal_action_counts[eps] = optimal_action_counts
+
+    # for eps in epsilons:
+    #     plt.plot(all_rewards[eps], label=f"epsilon = {eps}")
+    # plt.title('Évolution de la récompense moyenne')
+    # plt.xlabel('Itération')
+    # plt.ylabel('Récompense')
+    # plt.legend()
+    # plt.show()
+
+    # for eps in epsilons:
+    #     plt.plot(all_optimal_action_counts[eps], label=f"epsilon = {eps}")
+    # plt.title('Évolution pourcentage actions optimales')
+    # plt.xlabel('Itération')
+    # plt.ylabel('Valeur')
+    # plt.legend()
+    # plt.show()
+
+    # Exo 5
+    # eps = 0.1
+    # players = {
+    #     "GreedyPlayer": [GreedyPlayer(n=10, eps=eps) for _ in range(2000)],
+    #     "OptimistGreedyPlayer": [OptimistGreedyPlayer(n=10, eps=eps) for _ in range(2000)]
+    # }
+    # bandits = [Ban10() for _ in range(2000)]
+    # all_rewards = {player_type: [] for player_type in players}
+    # all_optimal_action_counts = {player_type: [] for player_type in players}
+
+    # for player_type in players:
+    #     rewards = []
+    #     optimal_action_counts = []
+    #     for _ in range(1000):
+    #         rewards_step = []
+    #         optimal_actions_step = 0
+    #         for i in range(len(players[player_type])):
+    #             player = players[player_type][i]
+    #             bandit = bandits[i]
+    #             action = player.get_action()
+    #             reward = bandit.play(action)
+    #             player.reward(action, reward)
+    #             optimal_action = action == bandit.id_best_bandit
+    #             if optimal_action:
+    #                 optimal_actions_step += 1
+    #             rewards_step.append(reward)
+    #         avg_reward = sum(rewards_step) / len(rewards_step)
+    #         rewards.append(avg_reward)
+    #         optimal_action_percentage = (optimal_actions_step / len(players[player_type])) * 100
+    #         optimal_action_counts.append(optimal_action_percentage)
+    #     all_rewards[player_type] = rewards
+    #     all_optimal_action_counts[player_type] = optimal_action_counts
+
+    # for player_type in players:
+    #     plt.plot(all_rewards[player_type], label=player_type)
+    # plt.title('Évolution de la récompense moyenne')
+    # plt.xlabel('Itération')
+    # plt.ylabel('Récompense')
+    # plt.legend()
+    # plt.show()
+
+    # for player_type in players:
+    #     plt.plot(all_optimal_action_counts[player_type], label=player_type)
+    # plt.title('Évolution pourcentage actions optimales')
+    # plt.xlabel('Itération')
+    # plt.ylabel('Pourcentage')
+    # plt.legend()
+    # plt.show()
+
+    # Exo 6
+    eps = 0.1
+    c = 1
+    players = {
+        "GreedyPlayer": [GreedyPlayer(n=10, eps=eps) for _ in range(2000)],
+        "UCBGreedyPlayer": [UCBGreedyPlayer(n=10, eps=eps, c=c) for _ in range(2000)]
+    }
+    bandits = [Ban10() for _ in range(2000)]
+    all_rewards = {player_type: [] for player_type in players}
+    all_optimal_action_counts = {player_type: [] for player_type in players}
+
+    for player_type in players:
         rewards = []
         optimal_action_counts = []
-
         for _ in range(1000):
             rewards_step = []
             optimal_actions_step = 0
-            for i in range(len(players)):
-                player = players[i]
+            for i in range(len(players[player_type])):
+                player = players[player_type][i]
                 bandit = bandits[i]
                 action = player.get_action()
                 reward = bandit.play(action)
@@ -123,27 +223,26 @@ if __name__ == "__main__":
                 optimal_action = action == bandit.id_best_bandit
                 if optimal_action:
                     optimal_actions_step += 1
-                # print(f"Tour {_}: Récompense: {reward}, Optimal: {optimal_action}")
                 rewards_step.append(reward)
             avg_reward = sum(rewards_step) / len(rewards_step)
             rewards.append(avg_reward)
-            optimal_action_percentage = (optimal_actions_step / len(players)) * 100
+            optimal_action_percentage = (optimal_actions_step / len(players[player_type])) * 100
             optimal_action_counts.append(optimal_action_percentage)
-        all_rewards[eps] = rewards
-        all_optimal_action_counts[eps] = optimal_action_counts
+        all_rewards[player_type] = rewards
+        all_optimal_action_counts[player_type] = optimal_action_counts
 
-    for eps in epsilons:
-        plt.plot(all_rewards[eps], label=f"epsilon = {eps}")
+    for player_type in players:
+        plt.plot(all_rewards[player_type], label=player_type)
     plt.title('Évolution de la récompense moyenne')
     plt.xlabel('Itération')
     plt.ylabel('Récompense')
     plt.legend()
     plt.show()
 
-    for eps in epsilons:
-        plt.plot(all_optimal_action_counts[eps], label=f"epsilon = {eps}")
+    for player_type in players:
+        plt.plot(all_optimal_action_counts[player_type], label=player_type)
     plt.title('Évolution pourcentage actions optimales')
     plt.xlabel('Itération')
-    plt.ylabel('Valeur')
+    plt.ylabel('Pourcentage')
     plt.legend()
     plt.show()
